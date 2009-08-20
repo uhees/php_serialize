@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |spec|
 	spec.name = "php_serialize"
-	spec.version = "1.1.1"
+	spec.version = "1.1.3"
 	spec.summary = "Ruby analogs to PHP's serialize() and unserialize() functions"
 	spec.require_path = 'lib/'
 	spec.files = ['lib/php_serialize.rb']

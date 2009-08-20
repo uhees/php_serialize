@@ -36,6 +36,9 @@
 #
 # See http://www.php.net/serialize and http://www.php.net/unserialize for
 # details on the PHP side of all this.
+
+require 'ostruct'
+
 module PHP
 # string = PHP.serialize(mixed var[, bool assoc])
 #
@@ -276,10 +279,9 @@ private
 				else # Nope; see if there's a Constant
 					begin
 						classmap[klass] = val = Module.const_get(klass)
-
 						val = val.new
-					rescue NameError # Nope; make a new Struct
-						classmap[klass] = val = Struct.new(klass.to_s, *attrs.collect { |v| v[0].to_s })
+					rescue NameError # Last resort: make a new OpenStruct
+						classmap[klass] = val = OpenStruct
 						val = val.new
 					end
 				end
