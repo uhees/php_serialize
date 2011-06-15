@@ -88,8 +88,9 @@ module PHP
 			when String, Symbol
 				s << "s:#{var.to_s.length}:\"#{var.to_s}\";"
 
-			when Fixnum # PHP doesn't have bignums
-				s << "i:#{var};"
+			when Integer
+			  raise RangeError, "value too  big to serialize as integer: #{var}" unless (-2147483648..2147483647).include? var
+        s << "i:#{var};"
 
 			when Float
 				s << "d:#{var};"
