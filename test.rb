@@ -111,6 +111,11 @@ class TestPhpSerialize < Test::Unit::TestCase
 	end
 end
 
-require 'test/unit/ui/console/testrunner'
-Test::Unit::UI::Console::TestRunner.run(TestPhpSerialize)
-
+if RUBY_VERSION =~ /1.9/
+  require 'test/unit/diff'
+  require 'test/unit/autorunner'
+  Test::Unit::AutoRunner.default_runner = "console"
+else
+  require 'test/unit/ui/console/testrunner'
+  Test::Unit::UI::Console::TestRunner.run(TestPhpSerialize)
+end
