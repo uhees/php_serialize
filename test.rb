@@ -72,6 +72,13 @@ class TestPhpSerialize < Test::Unit::TestCase
 	test TestClass.new("Foo", 65), 'O:9:"testclass":2:{s:4:"name";s:3:"Foo";s:5:"value";i:65;}',
 		:name => 'Class'
 
+  def test_unserialize_unknown_class
+    php = 'O:12:"unknownclass":2:{s:4:"name";s:3:"Foo";s:5:"value";i:65;}'
+    ruby = OpenStruct.new('name' => "Foo", 'value' => 65);
+    unserialized = PHP.unserialize(php);
+    assert_equal ruby, unserialized
+  end
+  
 	# Verify assoc is passed down calls.
 	# Slightly awkward because hashes don't guarantee order.
 	def test_assoc
