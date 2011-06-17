@@ -86,7 +86,7 @@ module PHP
 				s << '}'
 
 			when String, Symbol
-				s << "s:#{var.to_s.length}:\"#{var.to_s}\";"
+				s << "s:#{var.to_s.bytesize}:\"#{var.to_s}\";"
 
 			when Integer
 			  raise RangeError, "value too  big to serialize as integer: #{var}" unless (-2147483648..2147483647).include? var
@@ -192,7 +192,8 @@ module PHP
 		string = StringIO.new(string)
 		def string.read_until(char)
 			val = ''
-			while (c = self.read(1)) != char
+			# readchar returns a string in 1.9 and a fixnum in 1.8
+			while (c = self.readchar) != char[0]
 				val << c
 			end
 			val
@@ -216,6 +217,7 @@ module PHP
 
 private
 	def PHP.do_unserialize(string, classmap, assoc)
+	  encoding = string.external_encoding rescue 'UTF-8'
 		val = nil
 		# determine a type
 		type = string.read(2)[0,1]
@@ -293,8 +295,10 @@ private
 
 			when 's' # string, s:length:"data";
 				len = string.read_until(':').to_i + 3 # quotes, separator
-				val = string.read(len)[1...-2] # read it, kill useless quotes
-
+				val = string.read(len)
+				val = val.force_encoding(encoding) if val.respond_to?(:force_encoding)
+				val = val[1...-2] # read it, kill useless quotes
+				
 			when 'i' # integer, i:123
 				val = string.read_until(';').to_i
 
