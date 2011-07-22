@@ -64,6 +64,9 @@ class TestPhpSerialize < Test::Unit::TestCase
 	test 4.2, 'd:4.2;'
 	test 'test', 's:4:"test";'
 	test 'ümläut_test', 's:13:"ümläut_test";'
+	val = {"TEXT"=>"Мотовилихинские заводы — один из флагманов российского ВПК. Компания активно работает над диверсификацией и модернизацией своего производства. Полагаю, что стратегия развития компании до 2015 года позволит существенно улучшить показатели, и рекомендую бумаги эмитента к покупке.", "TYPE"=>"html"}
+	res = "a:2:{s:4:\"TEXT\";s:514:\"Мотовилихинские заводы — один из флагманов российского ВПК. Компания активно работает над диверсификацией и модернизацией своего производства. Полагаю, что стратегия развития компании до 2015 года позволит существенно улучшить показатели, и рекомендую бумаги эмитента к покупке.\";s:4:\"TYPE\";s:4:\"html\";}"
+	test val, res
 	test :test, 's:4:"test";', :name => 'Symbol'
 	test "\"\n\t\"", "s:4:\"\"\n\t\"\";", :name => 'Complex string'
 	test [nil, true, false, 42, 4.2, 'test'], 'a:6:{i:0;N;i:1;b:1;i:2;b:0;i:3;i:42;i:4;d:4.2;i:5;s:4:"test";}',
@@ -80,7 +83,7 @@ class TestPhpSerialize < Test::Unit::TestCase
     unserialized = PHP.unserialize(php);
     assert_equal ruby, unserialized
   end
-  
+
 	# Verify assoc is passed down calls.
 	# Slightly awkward because hashes don't guarantee order.
 	def test_assoc
