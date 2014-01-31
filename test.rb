@@ -114,6 +114,12 @@ class TestPhpSerialize < Test::Unit::TestCase
       assert phps.include?(serialized)
     end
   end
+  
+  def test_non_word_characters_in_keys
+    ruby = { 'dotted.key' => 'value' }
+    php = 'dotted.key|s:5:"value";'
+    assert_equal ruby, PHP.unserialize(php)
+  end
 end
 
 if RUBY_VERSION =~ /1.9/

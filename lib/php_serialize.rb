@@ -199,18 +199,19 @@ module PHP
       val
     end
 
-    if string.string =~ /^(\w+)\|/ # session_name|serialized_data
-      ret = Hash.new
-      loop do
-        if string.string[string.pos, 32] =~ /^(\w+)\|/
-          string.pos += $&.size
-          ret[$1] = PHP.do_unserialize(string, classmap, assoc)
-        else
-          break
-        end
-      end
-      ret
-    else
+	valid_key_pattern = /^([^!|]+)\|/
+	if string.string =~  valid_key_pattern # session_name|serialized_data
+		ret = Hash.new
+		loop do
+			if string.string[string.pos, 32] =~ valid_key_pattern
+				string.pos += $&.size
+				ret[$1] = PHP.do_unserialize(string, classmap, assoc)
+			else
+				break
+			end
+		end
+		ret
+	else
       PHP.do_unserialize(string, classmap, assoc)
     end
   end
