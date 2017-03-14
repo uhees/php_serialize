@@ -99,15 +99,15 @@ module PHP
         s << 'N;'
 
       when FalseClass, TrueClass
-        s << "b:#{var ? 1 :0};"
+        s << "b:#{var ? 1 : 0};"
 
       else
         if var.respond_to?(:to_assoc)
           v = var.to_assoc
           # encode as Object with same name
           s << "O:#{var.class.to_s.length}:\"#{var.class.to_s.downcase}\":#{v.length}:{"
-          v.each do |k,v|
-            s << "#{PHP.serialize(k.to_s, assoc)}#{PHP.serialize(v, assoc)}"
+          v.each do |key,value|
+            s << "#{PHP.serialize(key.to_s, assoc)}#{PHP.serialize(value, assoc)}"
           end
           s << '}'
         else
@@ -199,19 +199,19 @@ module PHP
       val
     end
 
-	valid_key_pattern = /^([^!|]+)\|/
-	if string.string =~  valid_key_pattern # session_name|serialized_data
-		ret = Hash.new
-		loop do
-			if string.string[string.pos, 32] =~ valid_key_pattern
-				string.pos += $&.size
-				ret[$1] = PHP.do_unserialize(string, classmap, assoc)
-			else
-				break
-			end
-		end
-		ret
-	else
+    valid_key_pattern = /^([^!|]+)\|/
+    if string.string =~  valid_key_pattern # session_name|serialized_data
+		  ret = Hash.new
+		  loop do
+			  if string.string[string.pos, 32] =~ valid_key_pattern
+				  string.pos += $&.size
+				  ret[$1] = PHP.do_unserialize(string, classmap, assoc)
+			  else
+				  break
+			  end
+		  end
+		  ret
+	  else
       PHP.do_unserialize(string, classmap, assoc)
     end
   end
